@@ -9,21 +9,27 @@
 /* Begin PBXBuildFile section */
 		F08D4F61242E2CC000890E36 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08D4F60242E2CC000890E36 /* AppDelegate.swift */; };
 		F08D4F63242E2CC000890E36 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08D4F62242E2CC000890E36 /* SceneDelegate.swift */; };
-		F08D4F65242E2CC000890E36 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08D4F64242E2CC000890E36 /* ViewController.swift */; };
 		F08D4F68242E2CC000890E36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F08D4F66242E2CC000890E36 /* Main.storyboard */; };
 		F08D4F6A242E2CC500890E36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F08D4F69242E2CC500890E36 /* Assets.xcassets */; };
 		F08D4F6D242E2CC500890E36 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F08D4F6B242E2CC500890E36 /* LaunchScreen.storyboard */; };
+		F0B4C7AF242E2F4600A506DC /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B4C7AE242E2F4600A506DC /* LoginController.swift */; };
+		F0B4C7B1242E3F5E00A506DC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B4C7B0242E3F5E00A506DC /* Extensions.swift */; };
+		F0B4C7B5242E5F0000A506DC /* SignUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B4C7B4242E5F0000A506DC /* SignUpController.swift */; };
+		F0B4C7B7242E6A4300A506DC /* AuthButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B4C7B6242E6A4300A506DC /* AuthButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F08D4F5D242E2CC000890E36 /* My Uber.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Uber.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F08D4F60242E2CC000890E36 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F08D4F62242E2CC000890E36 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		F08D4F64242E2CC000890E36 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		F08D4F67242E2CC000890E36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F08D4F69242E2CC500890E36 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F08D4F6C242E2CC500890E36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F08D4F6E242E2CC500890E36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F0B4C7AE242E2F4600A506DC /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		F0B4C7B0242E3F5E00A506DC /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		F0B4C7B4242E5F0000A506DC /* SignUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpController.swift; sourceTree = "<group>"; };
+		F0B4C7B6242E6A4300A506DC /* AuthButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,15 +62,58 @@
 		F08D4F5F242E2CC000890E36 /* My Uber */ = {
 			isa = PBXGroup;
 			children = (
+				F08D4F7B242E2D1F00890E36 /* Model */,
+				F08D4F7A242E2D1900890E36 /* View */,
+				F08D4F79242E2D1400890E36 /* Controller */,
+				F08D4F77242E2D0700890E36 /* Service */,
+				F08D4F74242E2CF300890E36 /* Utils */,
 				F08D4F60242E2CC000890E36 /* AppDelegate.swift */,
 				F08D4F62242E2CC000890E36 /* SceneDelegate.swift */,
-				F08D4F64242E2CC000890E36 /* ViewController.swift */,
 				F08D4F66242E2CC000890E36 /* Main.storyboard */,
 				F08D4F69242E2CC500890E36 /* Assets.xcassets */,
 				F08D4F6B242E2CC500890E36 /* LaunchScreen.storyboard */,
 				F08D4F6E242E2CC500890E36 /* Info.plist */,
 			);
 			path = "My Uber";
+			sourceTree = "<group>";
+		};
+		F08D4F74242E2CF300890E36 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				F0B4C7B0242E3F5E00A506DC /* Extensions.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		F08D4F77242E2D0700890E36 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		F08D4F79242E2D1400890E36 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				F0B4C7AE242E2F4600A506DC /* LoginController.swift */,
+				F0B4C7B4242E5F0000A506DC /* SignUpController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		F08D4F7A242E2D1900890E36 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				F0B4C7B6242E6A4300A506DC /* AuthButton.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		F08D4F7B242E2D1F00890E36 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,9 +187,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F08D4F65242E2CC000890E36 /* ViewController.swift in Sources */,
+				F0B4C7B5242E5F0000A506DC /* SignUpController.swift in Sources */,
+				F0B4C7B7242E6A4300A506DC /* AuthButton.swift in Sources */,
+				F0B4C7AF242E2F4600A506DC /* LoginController.swift in Sources */,
 				F08D4F61242E2CC000890E36 /* AppDelegate.swift in Sources */,
 				F08D4F63242E2CC000890E36 /* SceneDelegate.swift in Sources */,
+				F0B4C7B1242E3F5E00A506DC /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
