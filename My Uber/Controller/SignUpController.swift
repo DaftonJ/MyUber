@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import GeoFire
 
 class SignUpController: UIViewController
 {
@@ -16,9 +17,13 @@ class SignUpController: UIViewController
     override func viewDidLoad() {
          super.viewDidLoad()
          configureUI()
+        
      }
     
     //MARK: - Properties
+    
+    private var location = LocationHandler.shared.locationManager.location
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "UBER"
@@ -110,19 +115,37 @@ class SignUpController: UIViewController
             
             guard let uid = result?.user.uid else {return}
             
+            
             let values = ["email": email,
                           "fullname": fullname,
                           "accountType": accountTypeIndex] as [String : Any]
             
-            Database.database().reference().child("users").child(uid).updateChildValues(values) { (error, ref) in
+            if accountTypeIndex == 1 {
                 
-                guard let controller = UIApplication.shared.keyWindow?.rootViewController as? HomeController else {return}
-                          controller.configureUI()
-                self.dismiss(animated: true, completion: nil)
+                let geofire = GeoFire(firebaseRef: REF_DRIVER_LOCATIONS)
+                guard let location = self.location else {return}
+                
+                geofire.setLocation(location, forKey: uid) { (error) in
+                    self.uploadUserDataAndShowHomeController(uid: uid, values: values)
+                }
             }
+            self.uploadUserDataAndShowHomeController(uid: uid, values: values)
+            
+            
         }
     }
     //MARK: - Helper Functions
+    
+    func uploadUserDataAndShowHomeController(uid: String, values: [String:Any]) {
+        
+        REF_USERS.child(uid).updateChildValues(values) { (error, ref) in
+            
+            guard let controller = UIApplication.shared.keyWindow?.rootViewController as? HomeController else {return}
+            
+            controller.configureUI()
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
     
     func configureUI()
     {
