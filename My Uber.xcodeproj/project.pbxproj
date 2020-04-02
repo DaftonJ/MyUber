@@ -11,6 +11,8 @@
 		F00C964A24321D0A00E01DB8 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00C964924321D0A00E01DB8 /* Service.swift */; };
 		F00C964C2432240A00E01DB8 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00C964B2432240A00E01DB8 /* User.swift */; };
 		F00C964E24322AD700E01DB8 /* LocationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00C964D24322AD700E01DB8 /* LocationHandler.swift */; };
+		F020E1CF2434B7E500B52F34 /* RideActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F020E1CE2434B7E500B52F34 /* RideActionView.swift */; };
+		F020E1D12434EEFA00B52F34 /* Trip.swift in Sources */ = {isa = PBXBuildFile; fileRef = F020E1D02434EEFA00B52F34 /* Trip.swift */; };
 		F054DD2F242E84490008675D /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F054DD2E242E84490008675D /* HomeController.swift */; };
 		F08D4F61242E2CC000890E36 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08D4F60242E2CC000890E36 /* AppDelegate.swift */; };
 		F08D4F63242E2CC000890E36 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08D4F62242E2CC000890E36 /* SceneDelegate.swift */; };
@@ -34,6 +36,8 @@
 		F00C964924321D0A00E01DB8 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		F00C964B2432240A00E01DB8 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		F00C964D24322AD700E01DB8 /* LocationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHandler.swift; sourceTree = "<group>"; };
+		F020E1CE2434B7E500B52F34 /* RideActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideActionView.swift; sourceTree = "<group>"; };
+		F020E1D02434EEFA00B52F34 /* Trip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trip.swift; sourceTree = "<group>"; };
 		F054DD2E242E84490008675D /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		F08D4F5D242E2CC000890E36 /* My Uber.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Uber.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F08D4F60242E2CC000890E36 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -154,6 +158,7 @@
 				F0CC1A07242FC134002AB5AC /* LocationInputActivationView.swift */,
 				F0F406E9242FCB2E0092184D /* LocationInputView.swift */,
 				F0918F992431054100C3515F /* LocationCell.swift */,
+				F020E1CE2434B7E500B52F34 /* RideActionView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -163,6 +168,7 @@
 			children = (
 				F00C964B2432240A00E01DB8 /* User.swift */,
 				F0D8385F24324F040072DDA9 /* DriverAnnotation.swift */,
+				F020E1D02434EEFA00B52F34 /* Trip.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -287,12 +293,14 @@
 				F0B4C7B7242E6A4300A506DC /* AuthButton.swift in Sources */,
 				F054DD2F242E84490008675D /* HomeController.swift in Sources */,
 				F0F406EA242FCB2E0092184D /* LocationInputView.swift in Sources */,
+				F020E1D12434EEFA00B52F34 /* Trip.swift in Sources */,
 				F0D8386024324F040072DDA9 /* DriverAnnotation.swift in Sources */,
 				F0B4C7AF242E2F4600A506DC /* LoginController.swift in Sources */,
 				F08D4F61242E2CC000890E36 /* AppDelegate.swift in Sources */,
 				F0918F9A2431054100C3515F /* LocationCell.swift in Sources */,
 				F00C964E24322AD700E01DB8 /* LocationHandler.swift in Sources */,
 				F08D4F63242E2CC000890E36 /* SceneDelegate.swift in Sources */,
+				F020E1CF2434B7E500B52F34 /* RideActionView.swift in Sources */,
 				F00C964C2432240A00E01DB8 /* User.swift in Sources */,
 				F00C964A24321D0A00E01DB8 /* Service.swift in Sources */,
 				F0CC1A08242FC134002AB5AC /* LocationInputActivationView.swift in Sources */,

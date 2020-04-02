@@ -41,7 +41,10 @@ class HomeController: UIViewController
     private let mapView = MKMapView()
     
     private let locationInputViewHeight: CGFloat = 200
+    private let rideActionViewHeight: CGFloat = 300
+    
     private let inputActivationView = LocationInputActivationView()
+    private let rideActionView = RideActionView()
     private let locationInputView = LocationInputView()
     
     private let tableView = UITableView()
@@ -52,6 +55,12 @@ class HomeController: UIViewController
     private var user: User? {
         didSet {
             locationInputView.user = user
+            
+            //checking if user is passenger cuz drivers will not see other drivers
+            if user?.accountType == .passenger {
+                fetchDrivers()
+                configureLocationInputActivationView()
+            }
         }
     }
     
@@ -66,7 +75,7 @@ class HomeController: UIViewController
     
     @objc func actionButtonPressed() {
         if actionButtonConfig == .showMenu {
-            
+            signOut()
         }
         else if actionButtonConfig == .dismissActionView{
             removeAnnotationsAndOverlays()
@@ -76,6 +85,7 @@ class HomeController: UIViewController
             UIView.animate(withDuration: 0.3) {
                 self.inputActivationView.alpha = 1
                 self.configureActionButton(config: .showMenu)
+                self.animateRideActionView(shouldShow: false)
             }
 
         }
@@ -89,7 +99,7 @@ class HomeController: UIViewController
     }
     
     func fetchDrivers() {
-
+        
         guard let location = locationManager?.location else {return}
         Service.shared.fetchDrivers(location: location) { (driver) in
             guard let coordinate = driver.location?.coordinate else {return}
@@ -151,7 +161,6 @@ class HomeController: UIViewController
     {
         configureUI()
         fetchUserData()
-        fetchDrivers()
     }
     
     fileprivate func configureActionButton(config: ActionButtonConfiguration) {
@@ -168,23 +177,31 @@ class HomeController: UIViewController
     func configureUI()
     {
         configueMapView()
-        configureTableView()
+        
+        configureRideActionView()
+        
         
         view.addSubview(actionButton)
         actionButton.anchor(top:view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: 16, paddingLeft: 20, width: 30, height: 30)
+        
+
+        configureTableView()
+    }
+    
+    func configureLocationInputActivationView() {
+        guard let user = user else {return}
         
         inputActivationView.delegate = self
         view.addSubview(inputActivationView)
         inputActivationView.centerX(inView: view)
         inputActivationView.setDimensions(height: 50, width: view.frame.width - 64)
         inputActivationView.anchor(top: actionButton.bottomAnchor, paddingTop: 32)
-        
-        //make  View invisible to animate it
+        //make invisbile to animate it
         inputActivationView.alpha = 0
         UIView.animate(withDuration: 2) {
             self.inputActivationView.alpha = 1
         }
-        
+
     }
     func configueMapView()
     {
@@ -211,6 +228,13 @@ class HomeController: UIViewController
             }
         })
     }
+    
+    func configureRideActionView() {
+        view.addSubview(rideActionView)
+        rideActionView.delegate = self
+        rideActionView.frame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: rideActionViewHeight)
+    }
+    
     func configureTableView(){
         tableView.delegate = self
         tableView.dataSource = self
@@ -234,6 +258,25 @@ class HomeController: UIViewController
             self.locationInputView.removeFromSuperview()
            
         }, completion: completion)
+    }
+    
+    func animateRideActionView(shouldShow: Bool = false, destination: MKPlacemark? = nil) {
+        UIView.animate(withDuration: 0.3) {
+            // if ride action shouldnt show up it will be hidden on the bottom of view cuz
+            //  y of the actionView will be height of the general view
+            
+            let yOrigin = shouldShow ? self.view.frame.height - self.rideActionViewHeight : self.view.frame.height
+            
+            if shouldShow {
+                //showing address on actionView
+                guard let destination = destination else {return}
+                self.rideActionView.destination = destination
+            }
+            
+            UIView.animate(withDuration: 0.3) {
+                self.rideActionView.frame.origin.y = yOrigin
+            }
+        }
     }
 }
 
@@ -419,9 +462,28 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource
             //Making sure that annotation isnt driver
             let annotations = self.mapView.annotations.filter({!$0.isKind(of: DriverAnnotation.self)})
             // zooming into route between user and placemark
-            self.mapView.showAnnotations(annotations, animated: true)
+            self.mapView.zoomToFit(annotations: annotations)
+            
+            
+            self.animateRideActionView(shouldShow: true, destination: selectedPlacemark)
+            
         }
         
 
     }
+}
+
+extension HomeController: RideActionViewDelegate {
+    func uploadTrip(_ view: RideActionView) {
+        guard let pickupCoordinates = locationManager?.location?.coordinate else {return}
+        guard let destinationCoordinates = view.destination?.coordinate else {return}
+        
+        Service.shared.uploadTrip(pickupCoordinates: pickupCoordinates, destinationCoordinates: destinationCoordinates) { (error, ref) in
+            if error != nil {
+                print("Failed to upload trip \(String(describing: error?.localizedDescription))")
+            }
+            
+        }
+    }
+
 }
