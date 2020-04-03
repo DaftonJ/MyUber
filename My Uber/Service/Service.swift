@@ -55,6 +55,7 @@ struct Service {
         let pickupArray = [pickupCoordinates.latitude, pickupCoordinates.longitude]
         let destinationArray = [destinationCoordinates.latitude, destinationCoordinates.longitude]
         
+        print()
         let values = ["pickupCoordinates": pickupArray,
                       "destinationCoordinates": destinationArray,
                       "state": TripState.requested.rawValue] as [String : Any]
@@ -62,10 +63,33 @@ struct Service {
         REF_TRIPS.child(uid).updateChildValues(values, withCompletionBlock: completion)
     }
     
-    func observeTrips(forDriver driver: User) {
+    func observeTrips(completion: @escaping(Trip) -> Void) {
         REF_TRIPS.observe(.childAdded) { (snapshot) in
             guard let dictionary = snapshot.value as? [String: Any] else {return}
             
+            let uid = snapshot.key
+            let trip = Trip(passengerUid: uid, dictionary: dictionary)
+            completion(trip)
+        }
+    }
+    
+    func acceptTrip(trip: Trip, completion: @escaping(Error?, DatabaseReference) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let values = ["driverUid": uid, "state": TripState.accepted.rawValue] as [String : Any]
+        
+        //Drivers have to know about all trips in database
+        REF_TRIPS.child(trip.passengerUid).updateChildValues(values, withCompletionBlock: completion)
+    }
+    
+    func observeCurrentTrip(completion: @escaping(Trip) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        
+        //Users have to know only about their trips
+        REF_TRIPS.child(uid).observe(.value) { (snapshot) in
+            guard let dictionary = snapshot.value as? [String:Any] else {return}
+            let uid = snapshot.key
+            let trip = Trip(passengerUid: uid, dictionary: dictionary)
+            completion(trip)
         }
     }
 }
