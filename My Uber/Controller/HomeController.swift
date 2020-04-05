@@ -22,6 +22,15 @@ private enum ActionButtonConfiguration {
     }
 }
 
+private enum AnnotationType: String {
+    case pickup
+    case destination
+}
+
+protocol HomeControllerDelegate: class {
+    func handleMenuToogle()
+}
+
 class HomeController: UIViewController
 {
     //MARK: - Lifecycle
@@ -29,9 +38,8 @@ class HomeController: UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        checkIfUserIsLoggedIn()
         enableLocationServices()
-
+        configureUI()
     }
 
     
@@ -51,8 +59,10 @@ class HomeController: UIViewController
     private var searchResults = [MKPlacemark]()
     private var actionButtonConfig = ActionButtonConfiguration()
     private var route: MKRoute?
+
+    weak var delegate: HomeControllerDelegate?
     
-    private var user: User? {
+    var user: User? {
         didSet {
             locationInputView.user = user
             
@@ -93,7 +103,7 @@ class HomeController: UIViewController
     
     @objc func actionButtonPressed() {
         if actionButtonConfig == .showMenu {
-            signOut()
+            delegate?.handleMenuToogle()
         }
         else if actionButtonConfig == .dismissActionView{
             removeAnnotationsAndOverlays()
@@ -108,35 +118,77 @@ class HomeController: UIViewController
 
         }
     }
-    //MARK: -  API
+    //MARK: -  Passenger API
     
     func observeCurrentTrip() {
-        Service.shared.observeCurrentTrip { (trip) in
+        PassengerService.shared.observeCurrentTrip { (trip) in
             self.trip = trip
+            guard let driverUid = trip.driverUid else {return}
+            //have to unwrap cuz cant do switch on optional value
+            guard let state = trip.state else {return}
             
-            if trip.state == .accepted {
+            switch state {
+                
+            case .requested:
+                break
+                
+            case .accepted:
                 self.shouldPresentLoadingView(present: false)
-                guard let driverUid = trip.driverUid else {return}
+                //get only one annotation with our driver
+                self.removeAnnotationsAndOverlays()
+                self.zoomForActiveTrip(withDriverUid: driverUid)
                 
                 Service.shared.fetchUserData(uid: driverUid) { (driver) in
-                    self.animateRideActionView(shouldShow: true,config: .tripAccepted, user: driver)
-                    
+                    self.animateRideActionView(shouldShow: true,
+                                               config: .tripAccepted,
+                                               user: driver)
                 }
+            case .driverArrived:
+                self.rideActionView.config = .driverArrived
+                
+            case .inProgress:
+                self.rideActionView.config = .tripInProgress
+                
+            case .arrivedAtDestination:
+                self.rideActionView.config = .endTrip
+                
+            case .completed:
+                PassengerService.shared.deleteTrip { (error, ref) in
+                    self.animateRideActionView(shouldShow: false)
+                    self.centerMapOnUserLocation()
+                    self.actionButtonConfig = .showMenu
+                    self.configureActionButton(config: .showMenu)
+                    self.inputActivationView.alpha = 1
+                    self.presentAlertController(withTitle: "Trip Completed", message: "We hope you enjoyed your trip.")
+                }
+                
             }
         }
     }
     
-    func fetchUserData() {
-        guard let currentUid = Auth.auth().currentUser?.uid else {return}
-        Service.shared.fetchUserData(uid: currentUid) { (user) in
-            self.user = user
+    func startTrip() {
+        guard let trip = self.trip else {return}
+        DriverService.shared.updateTripState(trip: trip, state: .inProgress) { (error, ref) in
+            self.rideActionView.config = .tripInProgress
+            self.removeAnnotationsAndOverlays()
+            self.mapView.addAnnotationAndSelect(forCoordinate: trip.destinationCoordinates)
+            
+            let placemark = MKPlacemark(coordinate: trip.destinationCoordinates)
+            let mapItem = MKMapItem(placemark: placemark)
+            
+            self.setCustomRegion(withType: .destination, coordinates: trip.destinationCoordinates)
+            
+            self.generatePolyLine(toDestination: mapItem)
+            
+            self.mapView.zoomToFit(annotations: self.mapView.annotations)
         }
     }
+    
     
     func fetchDrivers() {
         
         guard let location = locationManager?.location else {return}
-        Service.shared.fetchDrivers(location: location) { (driver) in
+        PassengerService.shared.fetchDrivers(location: location) { (driver) in
             guard let coordinate = driver.location?.coordinate else {return}
             let annotation = DriverAnnotation(uid: driver.uid, coordinate: coordinate)
             
@@ -149,6 +201,7 @@ class HomeController: UIViewController
                     {
                         //update postition here
                         driverAnno.updateAnnotationPosition(withCoordinate: coordinate)
+                        self.zoomForActiveTrip(withDriverUid: driver.uid )
                         return true
                     }
                     return false
@@ -163,46 +216,27 @@ class HomeController: UIViewController
         }
     }
     
+    //MARK: - Drivers API
+    
     func observeTrips() {
-        Service.shared.observeTrips { (trip) in
+        DriverService.shared.observeTrips { (trip) in
             self.trip = trip
         }
     }
     
-    func checkIfUserIsLoggedIn() {
-        if Auth.auth().currentUser?.uid == nil{
-            DispatchQueue.main.async {
-                let nav = UINavigationController(rootViewController: LoginController())
-                nav.modalPresentationStyle = .fullScreen
-                self.present(nav, animated: true, completion: nil)
-            }
+    func observeCancelledTrip(trip: Trip) {
+        DriverService.shared.observeTripCancelled(trip: trip) {
+            self.removeAnnotationsAndOverlays()
+            self.animateRideActionView(shouldShow: false)
+            //zooming out when user cancel trip
+            self.centerMapOnUserLocation()
+            self.presentAlertController(withTitle: "Oops!", message: "The passenger has decided to cancel this ride. Press Ok to continue.")
         }
-        else {
-      configure()
-        }
+        
     }
-    
-    func signOut() {
-        do
-        {
-            try Auth.auth().signOut()
-            DispatchQueue.main.async {
-                let nav = UINavigationController(rootViewController: LoginController())
-                nav.modalPresentationStyle = .fullScreen
-                self.present(nav, animated: true, completion: nil)
-            }
-        }
-        catch let error {
-            print("Error with signing out user \(error)")
-        }
-    }
+
     //MARK: - Helper Functions
-    
-    func configure()
-    {
-        configureUI()
-        fetchUserData()
-    }
+
     
     fileprivate func configureActionButton(config: ActionButtonConfiguration) {
         if config == .showMenu {
@@ -230,7 +264,7 @@ class HomeController: UIViewController
     }
     
     func configureLocationInputActivationView() {
-        guard let user = user else {return}
+        guard user != nil else {return}
         
         inputActivationView.delegate = self
         view.addSubview(inputActivationView)
@@ -323,7 +357,7 @@ class HomeController: UIViewController
                 if let destination = destination {
                     self.rideActionView.destination = destination
                 }
-                self.rideActionView.configureUI(withConfig: config)
+                self.rideActionView.config = config
             }
         }
     }
@@ -376,11 +410,53 @@ private extension HomeController {
             mapView.removeOverlay(mapView.overlays[0])
         }
     }
+    
+    func centerMapOnUserLocation() {
+        guard let coordinate = locationManager?.location?.coordinate else {return}
+        let region = MKCoordinateRegion(center: coordinate,
+                                        latitudinalMeters: 2000,
+                                        longitudinalMeters: 2000)
+        mapView.setRegion(region, animated: true)
+    }
+    
+    func setCustomRegion(withType type: AnnotationType, coordinates: CLLocationCoordinate2D) {
+        let region = CLCircularRegion(center: coordinates, radius: 40, identifier: type.rawValue)
+        locationManager?.startMonitoring(for: region)
+    }
+    
+    func zoomForActiveTrip(withDriverUid uid: String) {
+        var annotations = [MKAnnotation]()
+        
+        self.mapView.annotations.forEach { (annotation) in
+            if let anno = annotation as? DriverAnnotation {
+                if anno.uid == uid {
+                    annotations.append(anno)
+                }
+            }
+            
+            if let userAnno = annotation as? MKUserLocation {
+                annotations.append(userAnno)
+            }
+        }
+        
+        self.mapView.zoomToFit(annotations: annotations)
+    }
+    
 }
 
 //MARK: - MKMapViewDelegate
 
 extension HomeController: MKMapViewDelegate {
+    
+    //did update user location
+    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+        
+        guard let user = self.user else {return}
+        guard user.accountType == .driver else {return}
+        //create new location from user location cuz function need CLLlocation not MKUserLocation
+        guard let location = userLocation.location else {return}
+        DriverService.shared.updateDriverLocation(location: location)
+    }
     
     //create annotation with custom image
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -404,16 +480,47 @@ extension HomeController: MKMapViewDelegate {
     }
 }
 
-// MARK: - Location services
+// MARK: - CLLocationManagerDelegate
 
-extension HomeController
-{
+extension HomeController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
+        
+        if region.identifier == AnnotationType.pickup.rawValue {
+            print("DEBUG: Did start monitoring pick up region \(region)")
+        }
+        
+        if region.identifier == AnnotationType.destination.rawValue {
+            print("DEBUG: Did start monitoring destination region \(region)")
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("DEBUG: Driver did enter passenger regon")
+        guard let trip = self.trip else {return}
+        
+        if region.identifier == AnnotationType.pickup.rawValue {
+            DriverService.shared.updateTripState(trip: trip, state: .driverArrived) { (error, ref) in
+                self.rideActionView.config = .pickupPassenger
+            }
+        }
+        
+        if region.identifier == AnnotationType.destination.rawValue {
+            print("DEBUG: Did start monitoring destination region \(region)")
+            
+            DriverService.shared.updateTripState(trip: trip, state: .arrivedAtDestination) { (error, ref) in
+                self.rideActionView.config = .endTrip
+            }
+        }
+        
+    }
+    
     func enableLocationServices()
     {
+        locationManager?.delegate = self
         
         switch CLLocationManager.authorizationStatus()
         {
-            
         case .notDetermined:
             locationManager?.requestWhenInUseAuthorization()
             
@@ -503,10 +610,8 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource
         
         //create and add new placemarks when user click on table view adress
         dismissLocationView { _ in
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = selectedPlacemark.coordinate
-            self.mapView.addAnnotation(annotation)
-            self.mapView.selectAnnotation(annotation, animated: true)
+            
+            self.mapView.addAnnotationAndSelect(forCoordinate: selectedPlacemark.coordinate)
             
             //Making sure that annotation isnt driver
             let annotations = self.mapView.annotations.filter({!$0.isKind(of: DriverAnnotation.self)})
@@ -524,13 +629,14 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource
 //MARK: - RideActionViewDelegate
 
 extension HomeController: RideActionViewDelegate {
+
     func uploadTrip(_ view: RideActionView) {
         guard let pickupCoordinates = locationManager?.location?.coordinate else {return}
         guard let destinationCoordinates = view.destination?.coordinate else {return}
         
         shouldPresentLoadingView(present: true, message: "Finding you a ride...")
         
-        Service.shared.uploadTrip(pickupCoordinates: pickupCoordinates, destinationCoordinates: destinationCoordinates) { (error, ref) in
+        PassengerService.shared.uploadTrip(pickupCoordinates: pickupCoordinates, destinationCoordinates: destinationCoordinates) { (error, ref) in
             if error != nil {
                 print("DEBUG: \(pickupCoordinates)")
                 print("Failed to upload trip \(String(describing: error?.localizedDescription))")
@@ -542,18 +648,50 @@ extension HomeController: RideActionViewDelegate {
             }
         }
     }
-
+    func dropOffPassenger() {
+        
+        guard let trip = self.trip else {return}
+        DriverService.shared.updateTripState(trip: trip, state: .completed) { (error, ref) in
+            self.removeAnnotationsAndOverlays()
+            self.centerMapOnUserLocation()
+            self.animateRideActionView(shouldShow: false)
+        }
+    }
+    
+    func pickupPassenger() {
+        startTrip()
+    }
+    
+    func cancelTrip() {
+        PassengerService.shared.deleteTrip { (error, ref) in
+            if error != nil {
+                print("Failed with canceling trip \(String(describing: error))")
+                return
+            }
+            //zooming out after cancel trip
+            self.centerMapOnUserLocation()
+            self.animateRideActionView(shouldShow: false)
+            self.removeAnnotationsAndOverlays()
+            
+            self.actionButton.setImage(#imageLiteral(resourceName: "baseline_menu_black_36dp").withRenderingMode(.alwaysOriginal), for: .normal)
+            self.actionButtonConfig = .showMenu
+            
+            self.inputActivationView.alpha = 1
+        }
+    }
 }
 
 //MARK: - PickupControllerDelegate
 
-extension HomeController:PickupControllerDelegate {
+extension HomeController: PickupControllerDelegate {
     func didAcceptTrip(trip: Trip) {
+        self.trip = trip
+        
+        self.mapView.addAnnotationAndSelect(forCoordinate: trip.pickupCoordinates)
 
-        let anno = MKPointAnnotation()
-        anno.coordinate = trip.pickupCoordinates
-        mapView.addAnnotation(anno)
-        mapView.selectAnnotation(anno, animated: true)
+        
+        //Creating new Region circle, when driver will be in circle status of trip will be pickup
+        setCustomRegion(withType: .pickup, coordinates: trip.pickupCoordinates)
         
         let placemark = MKPlacemark(coordinate: trip.pickupCoordinates)
         let mapItem = MKMapItem(placemark: placemark)
@@ -561,6 +699,10 @@ extension HomeController:PickupControllerDelegate {
         generatePolyLine(toDestination: mapItem)
         
         mapView.zoomToFit(annotations: mapView.annotations)
+        
+        //Happend when user cancel trip
+        observeCancelledTrip(trip: trip)
+        
         
         self.dismiss(animated: true) {
             Service.shared.fetchUserData(uid: trip.passengerUid) { (passenger) in

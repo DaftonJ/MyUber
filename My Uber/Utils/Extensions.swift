@@ -167,13 +167,27 @@ extension MKMapView {
             zoomRect = zoomRect.union(pointRect)
         }
         //create padding in mapView
-        let insets = UIEdgeInsets(top:100, left:100, bottom: 250, right: 100)
+        let insets = UIEdgeInsets(top:100, left:100, bottom: 300, right: 100)
         setVisibleMapRect(zoomRect, edgePadding: insets, animated: true)
+    }
+    
+    func addAnnotationAndSelect(forCoordinate coordinate: CLLocationCoordinate2D) {
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        addAnnotation(annotation)
+        selectAnnotation(annotation, animated: true)
     }
 }
 
 
 extension UIViewController {
+    
+    func presentAlertController(withTitle title:String, message:String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
     func shouldPresentLoadingView(present:Bool, message: String? = nil) {
         
         if present {
