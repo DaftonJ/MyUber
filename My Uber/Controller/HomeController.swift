@@ -57,9 +57,10 @@ class HomeController: UIViewController
     
     private let tableView = UITableView()
     private var searchResults = [MKPlacemark]()
+    private var savedLocations = [MKPlacemark]()
     private var actionButtonConfig = ActionButtonConfiguration()
     private var route: MKRoute?
-
+    
     weak var delegate: HomeControllerDelegate?
     
     var user: User? {
@@ -71,6 +72,7 @@ class HomeController: UIViewController
                 fetchDrivers()
                 configureLocationInputActivationView()
                 observeCurrentTrip()
+                configureSavedUserLocations()
             }   else {
                 observeTrips()
             }
@@ -80,6 +82,7 @@ class HomeController: UIViewController
     private var trip: Trip? {
         didSet {
             guard let user = user else {return}
+            
             if user.accountType == .driver {
                 guard let trip = trip else {return}
                 let controller = PickupController(trip: trip)
@@ -249,6 +252,32 @@ class HomeController: UIViewController
         }
     }
     
+    func configureSavedUserLocations() {
+        guard let user = user else {return}
+        //have to clear array to avoid duplicate
+        savedLocations.removeAll()
+        
+        if let homeLocation = user.homeLocation {
+            geocodeAddressString(address: homeLocation)
+        }
+        
+        if let workLocation = user.workLocation {
+            geocodeAddressString(address: workLocation)
+        }
+    }
+    
+    func geocodeAddressString(address: String) {
+        //Creating placemarks from String!!! But there are CLplacemarks so have to convert them into MKPlacemark
+        let geocoder = CLGeocoder()
+        geocoder.geocodeAddressString(address) { (placemarks, error) in
+            guard let clPlacemark = placemarks?.first else {return}
+            let placemark = MKPlacemark(placemark: clPlacemark)
+            
+            self.savedLocations.append(placemark)
+            self.tableView.reloadData()
+        }
+    }
+    
     func configureUI()
     {
         configueMapView()
@@ -288,20 +317,20 @@ class HomeController: UIViewController
         mapView.delegate = self
     }
     
-    func configueLocationInputView()
-    {
+    func configureLocationInputView() {
         locationInputView.delegate = self
         view.addSubview(locationInputView)
-        locationInputView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, height: locationInputViewHeight )
+        locationInputView.anchor(top: view.topAnchor, left: view.leftAnchor,
+                                 right: view.rightAnchor, height: locationInputViewHeight)
         locationInputView.alpha = 0
         
         UIView.animate(withDuration: 0.5, animations: {
             self.locationInputView.alpha = 1
-            
-            UIView.animate(withDuration: 0.3) {
+        }) { _ in
+            UIView.animate(withDuration: 0.3, animations: {
                 self.tableView.frame.origin.y = self.locationInputViewHeight
-            }
-        })
+            })
+        }
     }
     
     func configureRideActionView() {
@@ -548,7 +577,7 @@ extension HomeController: LocationInputActivationViewDelegate
 {
     func presentLocationInputView() {
         inputActivationView.alpha = 0
-        configueLocationInputView()
+        configureLocationInputView()
     }
 }
 
@@ -565,9 +594,9 @@ extension HomeController: LocationInputViewDelegate
     
     func dismissLocationInputView() {
         dismissLocationView { _ in
-            UIView.animate(withDuration: 0.5) {
+            UIView.animate(withDuration: 0.5, animations: {
                 self.inputActivationView.alpha = 1
-            }
+            })
         }
     }
 }
@@ -577,7 +606,7 @@ extension HomeController: LocationInputViewDelegate
 extension HomeController: UITableViewDelegate, UITableViewDataSource
 {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "TEST"
+        return section == 0 ? "Saved Locations" : "Results"
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -585,11 +614,15 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 2 : searchResults.count
+        return section == 0 ? savedLocations.count : searchResults.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! LocationCell
+        
+        if indexPath.section == 0 {
+            cell.placemark = savedLocations[indexPath.row]
+        }
         
         if indexPath.section == 1{
             cell.placemark = searchResults[indexPath.row]
@@ -600,7 +633,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         
-        let selectedPlacemark = searchResults[indexPath.row]
+        let selectedPlacemark = indexPath.section == 0 ? savedLocations[indexPath.row] : searchResults[indexPath.row]
 
         
         configureActionButton(config: .dismissActionView)
@@ -610,7 +643,6 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource
         
         //create and add new placemarks when user click on table view adress
         dismissLocationView { _ in
-            
             self.mapView.addAnnotationAndSelect(forCoordinate: selectedPlacemark.coordinate)
             
             //Making sure that annotation isnt driver

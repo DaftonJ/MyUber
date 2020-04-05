@@ -56,14 +56,15 @@ class LocationInputView: UIView {
     
     //MARK: - Properties
     
+    
+    weak var delegate: LocationInputViewDelegate?
+    
     var user: User? {
         didSet {
             titleLabel.text = user?.fullname
         }
     }
-    
-    weak var delegate: LocationInputViewDelegate?
-    
+
     private let backButton: UIButton =
        {
            let button = UIButton(type: .system)
@@ -121,12 +122,14 @@ class LocationInputView: UIView {
         tf.backgroundColor = .lightGray
         tf.returnKeyType = .search
         tf.font = UIFont.systemFont(ofSize: 14)
-         tf.delegate = self
+        tf.delegate = self
+        
         
         let paddingView = UIView()
         paddingView.setDimensions(height: 30, width: 8)
         tf.leftView = paddingView
         tf.leftViewMode = .always
+        tf.clearButtonMode = .whileEditing
         
         return tf
     }()

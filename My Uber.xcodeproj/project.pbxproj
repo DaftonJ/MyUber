@@ -15,9 +15,12 @@
 		F020E1D12434EEFA00B52F34 /* Trip.swift in Sources */ = {isa = PBXBuildFile; fileRef = F020E1D02434EEFA00B52F34 /* Trip.swift */; };
 		F020E1D324360E8B00B52F34 /* PickupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F020E1D224360E8B00B52F34 /* PickupController.swift */; };
 		F054DD2F242E84490008675D /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F054DD2E242E84490008675D /* HomeController.swift */; };
+		F05DF525243A1D7300EE8716 /* UserInfoHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05DF524243A1D7300EE8716 /* UserInfoHeader.swift */; };
+		F05DF528243A25A600EE8716 /* AddLocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05DF527243A25A600EE8716 /* AddLocationController.swift */; };
 		F076DBC32438AFF20039EA1B /* MenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F076DBC22438AFF20039EA1B /* MenuController.swift */; };
 		F076DBC52438B01C0039EA1B /* ContainerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F076DBC42438B01C0039EA1B /* ContainerController.swift */; };
 		F076DBC72438B6550039EA1B /* MenuHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F076DBC62438B6550039EA1B /* MenuHeader.swift */; };
+		F076DBCA243A1A4C0039EA1B /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F076DBC9243A1A4C0039EA1B /* SettingsController.swift */; };
 		F08D4F61242E2CC000890E36 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08D4F60242E2CC000890E36 /* AppDelegate.swift */; };
 		F08D4F63242E2CC000890E36 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08D4F62242E2CC000890E36 /* SceneDelegate.swift */; };
 		F08D4F68242E2CC000890E36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F08D4F66242E2CC000890E36 /* Main.storyboard */; };
@@ -44,9 +47,12 @@
 		F020E1D02434EEFA00B52F34 /* Trip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trip.swift; sourceTree = "<group>"; };
 		F020E1D224360E8B00B52F34 /* PickupController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickupController.swift; sourceTree = "<group>"; };
 		F054DD2E242E84490008675D /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
+		F05DF524243A1D7300EE8716 /* UserInfoHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoHeader.swift; sourceTree = "<group>"; };
+		F05DF527243A25A600EE8716 /* AddLocationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocationController.swift; sourceTree = "<group>"; };
 		F076DBC22438AFF20039EA1B /* MenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuController.swift; sourceTree = "<group>"; };
 		F076DBC42438B01C0039EA1B /* ContainerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerController.swift; sourceTree = "<group>"; };
 		F076DBC62438B6550039EA1B /* MenuHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuHeader.swift; sourceTree = "<group>"; };
+		F076DBC9243A1A4C0039EA1B /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		F08D4F5D242E2CC000890E36 /* My Uber.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Uber.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F08D4F60242E2CC000890E36 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F08D4F62242E2CC000890E36 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -93,6 +99,15 @@
 				226AA49055EDB822991B26EB /* Pods-My Uber.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		F05DF526243A259700EE8716 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F076DBC9243A1A4C0039EA1B /* SettingsController.swift */,
+				F05DF527243A25A600EE8716 /* AddLocationController.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		F076DBC02438AFCF0039EA1B /* Authentication */ = {
@@ -174,6 +189,7 @@
 				F076DBC02438AFCF0039EA1B /* Authentication */,
 				F054DD2E242E84490008675D /* HomeController.swift */,
 				F020E1D224360E8B00B52F34 /* PickupController.swift */,
+				F05DF526243A259700EE8716 /* Settings */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -187,6 +203,7 @@
 				F0F406E9242FCB2E0092184D /* LocationInputView.swift */,
 				F0CC1A07242FC134002AB5AC /* LocationInputActivationView.swift */,
 				F076DBC62438B6550039EA1B /* MenuHeader.swift */,
+				F05DF524243A1D7300EE8716 /* UserInfoHeader.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -320,12 +337,15 @@
 				F0B4C7B5242E5F0000A506DC /* SignUpController.swift in Sources */,
 				F0B4C7B7242E6A4300A506DC /* AuthButton.swift in Sources */,
 				F054DD2F242E84490008675D /* HomeController.swift in Sources */,
+				F05DF525243A1D7300EE8716 /* UserInfoHeader.swift in Sources */,
+				F076DBCA243A1A4C0039EA1B /* SettingsController.swift in Sources */,
 				F0F406EA242FCB2E0092184D /* LocationInputView.swift in Sources */,
 				F020E1D12434EEFA00B52F34 /* Trip.swift in Sources */,
 				F020E1D324360E8B00B52F34 /* PickupController.swift in Sources */,
 				F0D8386024324F040072DDA9 /* DriverAnnotation.swift in Sources */,
 				F0B4C7AF242E2F4600A506DC /* LoginController.swift in Sources */,
 				F08D4F61242E2CC000890E36 /* AppDelegate.swift in Sources */,
+				F05DF528243A25A600EE8716 /* AddLocationController.swift in Sources */,
 				F0918F9A2431054100C3515F /* LocationCell.swift in Sources */,
 				F076DBC32438AFF20039EA1B /* MenuController.swift in Sources */,
 				F00C964E24322AD700E01DB8 /* LocationHandler.swift in Sources */,
