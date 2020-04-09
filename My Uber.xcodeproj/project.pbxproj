@@ -33,6 +33,7 @@
 		F0B4C7B5242E5F0000A506DC /* SignUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B4C7B4242E5F0000A506DC /* SignUpController.swift */; };
 		F0B4C7B7242E6A4300A506DC /* AuthButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B4C7B6242E6A4300A506DC /* AuthButton.swift */; };
 		F0CC1A08242FC134002AB5AC /* LocationInputActivationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CC1A07242FC134002AB5AC /* LocationInputActivationView.swift */; };
+		F0CED29C243B5DDE00E032B0 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CED29B243B5DDE00E032B0 /* CircularProgressView.swift */; };
 		F0D8386024324F040072DDA9 /* DriverAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D8385F24324F040072DDA9 /* DriverAnnotation.swift */; };
 		F0F406EA242FCB2E0092184D /* LocationInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F406E9242FCB2E0092184D /* LocationInputView.swift */; };
 /* End PBXBuildFile section */
@@ -67,6 +68,7 @@
 		F0B4C7B4242E5F0000A506DC /* SignUpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpController.swift; sourceTree = "<group>"; };
 		F0B4C7B6242E6A4300A506DC /* AuthButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthButton.swift; sourceTree = "<group>"; };
 		F0CC1A07242FC134002AB5AC /* LocationInputActivationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationInputActivationView.swift; sourceTree = "<group>"; };
+		F0CED29B243B5DDE00E032B0 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		F0D8385F24324F040072DDA9 /* DriverAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverAnnotation.swift; sourceTree = "<group>"; };
 		F0F406E9242FCB2E0092184D /* LocationInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationInputView.swift; sourceTree = "<group>"; };
 		F72677A148F457398AE9493B /* Pods_My_Uber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_My_Uber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -204,6 +206,7 @@
 				F0CC1A07242FC134002AB5AC /* LocationInputActivationView.swift */,
 				F076DBC62438B6550039EA1B /* MenuHeader.swift */,
 				F05DF524243A1D7300EE8716 /* UserInfoHeader.swift */,
+				F0CED29B243B5DDE00E032B0 /* CircularProgressView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -344,6 +347,7 @@
 				F020E1D324360E8B00B52F34 /* PickupController.swift in Sources */,
 				F0D8386024324F040072DDA9 /* DriverAnnotation.swift in Sources */,
 				F0B4C7AF242E2F4600A506DC /* LoginController.swift in Sources */,
+				F0CED29C243B5DDE00E032B0 /* CircularProgressView.swift in Sources */,
 				F08D4F61242E2CC000890E36 /* AppDelegate.swift in Sources */,
 				F05DF528243A25A600EE8716 /* AddLocationController.swift in Sources */,
 				F0918F9A2431054100C3515F /* LocationCell.swift in Sources */,

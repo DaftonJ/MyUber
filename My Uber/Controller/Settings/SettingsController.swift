@@ -103,10 +103,7 @@ class SettingsController: UITableViewController {
     
     func configureNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.barStyle = .black
         navigationItem.title = "Settings"
-        navigationController?.navigationBar.barTintColor = .backgroundColor
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "baseline_clear_white_36pt_2x").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleDismissal))
     }

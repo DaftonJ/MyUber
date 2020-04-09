@@ -46,7 +46,10 @@ class SignUpController: UIViewController
         let view = UIView().inputContainerView(image: #imageLiteral(resourceName: "ic_account_box_white_2x"), segmentedControl: accountTypeSegmentedControl )
         return view
        }()
-    
+    private lazy var numberContainerView: UIView = {
+        return UIView().inputContainerView(image: #imageLiteral(resourceName: "ic_person_outline_white_2x"), textfield: numberTextField)
+    }()
+
     
     
     private let emailTextField: UITextField = {
@@ -60,6 +63,10 @@ class SignUpController: UIViewController
     private let passwordTextField: UITextField = {
         return UITextField().createTexfield(withPlaceholder: "Password", isSecureTextEntry: true)
     }()
+    private let numberTextField: UITextField = {
+        return UITextField().createTexfield(withPlaceholder: "Number", isSecureTextEntry: false)
+    }()
+    
     
     private let accountTypeSegmentedControl: UISegmentedControl = {
         let sc = UISegmentedControl(items: ["Rider","Driver"])

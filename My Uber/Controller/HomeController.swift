@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import MapKit
+import Foundation
 
 private let reuseIdentifier = "LocationCell"
 private let annotationIdentifier = "DriverAnnotation"
@@ -134,7 +135,16 @@ class HomeController: UIViewController
                 
             case .requested:
                 break
-                
+            
+            case .denied:
+                self.shouldPresentLoadingView(present: false)
+                self.presentAlertController(withTitle: "Oops!", message: "It looks like we couldn't find you a driver. Please try again.")
+                PassengerService.shared.deleteTrip { (error, ref) in
+                    self.centerMapOnUserLocation()
+                    self.configureActionButton(config: .showMenu)
+                    self.inputActivationView.alpha = 1
+                    self.removeAnnotationsAndOverlays()
+                }
             case .accepted:
                 self.shouldPresentLoadingView(present: false)
                 //get only one annotation with our driver
@@ -631,7 +641,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let selectedPlacemark = indexPath.section == 0 ? savedLocations[indexPath.row] : searchResults[indexPath.row]
 
