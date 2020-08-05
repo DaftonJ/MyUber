@@ -102,11 +102,11 @@ struct PassengerService {
         
         REF_TRIPS.child(uid).updateChildValues(values, withCompletionBlock: completion)
     }
-    
+  
     func observeCurrentTrip(completion: @escaping(Trip) -> Void) {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         
-        //Users have to know only about their trips
+
         REF_TRIPS.child(uid).observe(.value) { (snapshot) in
             guard let dictionary = snapshot.value as? [String:Any] else {return}
             let uid = snapshot.key
